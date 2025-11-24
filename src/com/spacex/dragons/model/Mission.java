@@ -24,7 +24,11 @@ public class Mission {
         return status;
     }
 
-    public List<String> getAssignedRockets() {
+    public List<Rocket> getAssignedRockets() {
+        return assignedRockets;
+    }
+
+    public List<String> getAssignedRocketsName() {
         return assignedRockets.stream().map(Rocket::getName).collect(Collectors.toList());
     }
 
