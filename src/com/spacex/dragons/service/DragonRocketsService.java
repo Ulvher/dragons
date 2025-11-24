@@ -1,11 +1,13 @@
 package com.spacex.dragons.service;
 
+import com.spacex.dragons.MissionSummary;
 import com.spacex.dragons.enums.MissionStatus;
 import com.spacex.dragons.enums.RocketStatus;
 import com.spacex.dragons.model.Mission;
 import com.spacex.dragons.model.Rocket;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DragonRocketsService {
     private final List<Rocket> rockets = new ArrayList<>();
@@ -87,6 +89,20 @@ public class DragonRocketsService {
         rocket.assignToMission(mission.getName());
         mission.addRocket(rocket);
         recalculateMissionStatus(mission);
+    }
+
+    // -------- Summary --------
+
+    public List<MissionSummary> getMissionsSummary() {
+        missions.sort(
+                Comparator
+                        .comparingInt(Mission::rocketsCount).reversed()
+                        .thenComparing(Mission::getName, Comparator.reverseOrder())
+        );
+
+        return missions.stream()
+                .map(MissionSummary::new)
+                .collect(Collectors.toList());
     }
 
     // -------- Internals --------

@@ -7,6 +7,7 @@ import com.spacex.dragons.model.Rocket;
 import com.spacex.dragons.service.DragonRocketsService;
 import org.junit.jupiter.api.*;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -163,4 +164,51 @@ class DragonRocketsServiceTest {
         // Assert
         assertEquals(MissionStatus.IN_PROGRESS, dragonRocketsService.getMission("Luna1").getStatus());
     }
+
+    @Test
+    void summaryOrdersByRocketCountDescAndNameDesc() {
+        // Setup
+        dragonRocketsService.addMission("Mars");
+        dragonRocketsService.addMission("Luna1");
+        dragonRocketsService.addMission("Double Landing");
+        dragonRocketsService.addMission("Transit");
+        dragonRocketsService.addMission("Luna2");
+        dragonRocketsService.addMission("Vertical Landing");
+
+        dragonRocketsService.addRocket("Dragon 1");
+        dragonRocketsService.addRocket("Dragon 2");
+        dragonRocketsService.addRocket("Red Dragon");
+        dragonRocketsService.addRocket("Dragon XL");
+        dragonRocketsService.addRocket("Falcon Heavy");
+
+        dragonRocketsService.assignRocketToMission("Dragon 1", "Luna1");
+        dragonRocketsService.assignRocketToMission("Dragon 2", "Luna1");
+        dragonRocketsService.changeMissionStatus("Double Landing", MissionStatus.ENDED);
+        dragonRocketsService.assignRocketToMission("Red Dragon", "Transit");
+        dragonRocketsService.assignRocketToMission("Dragon XL", "Transit");
+        dragonRocketsService.assignRocketToMission("Falcon Heavy", "Transit");
+        dragonRocketsService.changeMissionStatus("Vertical Landing", MissionStatus.ENDED);
+
+        // make Luna1 pending by putting one rocket in repair
+        dragonRocketsService.changeRocketStatus("Dragon 2", RocketStatus.IN_REPAIR);
+
+        // Test
+        List<String> missionsInOrder = dragonRocketsService.getMissionsSummary().stream().flatMap(item -> item.getMissionSummary().stream()).toList();
+
+        // Assert
+        assertEquals(List.of(
+                "* Transit - IN_PROGRESS - Dragons: 3",
+                "** Red Dragon - ON_GROUND",
+                "** Dragon XL - ON_GROUND",
+                "** Falcon Heavy - ON_GROUND",
+                "* Luna1 - PENDING - Dragons: 2",
+                "** Dragon 1 - ON_GROUND",
+                "** Dragon 2 - IN_REPAIR",
+                "* Vertical Landing - ENDED - Dragons: 0",
+                "* Mars - SCHEDULED - Dragons: 0",
+                "* Luna2 - SCHEDULED - Dragons: 0",
+                "* Double Landing - ENDED - Dragons: 0"
+                        ), missionsInOrder);
+    }
+
 }
