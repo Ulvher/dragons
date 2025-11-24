@@ -5,7 +5,7 @@ import com.spacex.dragons.enums.RocketStatus;
 import java.util.Objects;
 
 public class Rocket {
-    private String name;
+    private final String name;
     private RocketStatus status;
     private String assignedMission;
 
@@ -27,7 +27,15 @@ public class Rocket {
         return Objects.requireNonNullElse(assignedMission, "");
     }
 
+    public Boolean hasAssignedMission() {
+        return assignedMission != null && !assignedMission.equals("");
+    }
+
     public void setStatus(RocketStatus status) {
         this.status = status;
+    }
+
+    public void assignToMission(String missionName) {
+        this.assignedMission = missionName;
     }
 }

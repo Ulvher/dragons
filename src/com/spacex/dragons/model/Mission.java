@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Mission {
-    private String name;
+    private final String name;
     private MissionStatus status;
-    private List<Rocket> assignedRockets = new ArrayList<>();
+    private final List<Rocket> assignedRockets = new ArrayList<>();
 
     public Mission(String name) {
         this.name = name;
@@ -34,5 +34,13 @@ public class Mission {
 
     public int rocketsCount() {
         return assignedRockets.size();
+    }
+
+    public void setStatus(MissionStatus status) {
+        this.status = status;
+    }
+
+    public void addRocket(Rocket rocket) {
+        this.assignedRockets.add(rocket);
     }
 }
