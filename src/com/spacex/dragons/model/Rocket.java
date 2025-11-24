@@ -2,6 +2,8 @@ package com.spacex.dragons.model;
 
 import com.spacex.dragons.enums.RocketStatus;
 
+import java.util.Objects;
+
 public class Rocket {
     private String name;
     private RocketStatus status;
@@ -22,6 +24,10 @@ public class Rocket {
     }
 
     public String getAssignedMission() {
-        return assignedMission;
+        return Objects.requireNonNullElse(assignedMission, "");
+    }
+
+    public void setStatus(RocketStatus status) {
+        this.status = status;
     }
 }
